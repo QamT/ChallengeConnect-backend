@@ -1,0 +1,9 @@
+language: node_js
+node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: TgtrDD2awn9Yb7jC09hfDf2+tVGiYQPFUAysebTesBAQKLn8sqYaZX132+5wz6SAQa8rrOzzXgji5Q0FgnLe+W31lAGy3cu7lKYDy2O5uXugt1lKGMbO+RDS8DXF18PkFWSWPsd1bDHXBj/6fGeRSdEwZXvJdOdYIHlvRqPbQ2krgei7al2a7lXLHl3BNcBUGH4eP2BudPNt8W0chIqrBen6cdpp+sGjUnYZ3mQd/lWh2VsJhVjgSPqG/DFmMfkKdKIz9yP3Lz6BaQJSkO7FuraGMDfzekjvoy89FDjh7nTkgbFR08DeFvhFGWjE4FWXi3UlxaN2EMivdk9koGM+VSA1NwksiQa6oC2irxgaDYRv/kFSNWUpaYf4HF0H4D3abpaqo7T2wre/KLY8Pvz4UterZrn/80/exDP6WcJ/xut8y3f9JYGWOvuVf0kVizHz1ytX6FnIu3cJmElXcq2Ns3aIs2N7HsIexTthnn8wF7+BGUF/06w/szGraoJii8yH4jRKXJUMHDwh3MDPjk5UqGF3yUUmnYmi9dyjbZkm19rbSumh5LbpTzCYlnMK61vETtkAxnliTSUl4fCItYMhDCqeC/BWKp/29DDcMHIQqOIDij7L2l88hPdfHLzK8X7qkfw7okZWMuj61+vXy1iWHz6fTSE10tsw0hlel99xR20=
+  app: young-chamber-83938
+  on:
+    repo: QamT/challenge-app-server
