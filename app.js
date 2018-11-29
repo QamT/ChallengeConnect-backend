@@ -10,7 +10,7 @@ const { CLIENT_ORIGIN } = require('./config');
 const { DATABASE_URL, PORT } = require('./config');
 
 app.use(cors({
-  origin: CLIENT_ORIGIN
+  origin: '*'
 }));
 
 middlewares(app);
@@ -31,5 +31,6 @@ module.exports = app;
 //test api with postman
 //setup heroko and ci
 //push to github
+
 //set up websockets
 //set up tests
