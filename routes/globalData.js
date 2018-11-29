@@ -4,19 +4,23 @@ const router = express.Router();
 const { User } = require( '../models/user');
 const { Challenge } = require('../models/challenge');
 
-router.get('/findUser', async(req, res) => {
-  const { name } = req.body;
-  const firstName = name.split(' ')[0].toLowerCase();
-  const lastName = name.split(' ')[1].toLowerCase();
-
+router.get('/findUser/:name', async(req, res) => {
+  let { name } = req.params;
+  name = name.split('+');
+  const firstName = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+  const lastName = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+  console.log(name);
   try {
-    const user = await User.find({ firstName });
-    const filterByLastName = user.filter(user => user.lastName.toLowerCase().includes(lastName));
+    const users = await User.find({ firstName });
+    console.log(users);
+    const filterByLastName = users.filter(user => user.lastName.toLowerCase().includes(lastName.toLowerCase()));
     if (!filterByLastName) return res.json(null);
+    const userInfo = filterByLastName.map(user => user.serializeUserDetails());
+    console.log(userInfo);
 
-    return res.json({ results: filterByLastName });
+    return res.json(userInfo);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json(userInfo);
   }
   
 });
@@ -35,8 +39,7 @@ router.get('/leaderboard', async(req, res) => {
 router.get('/getChallenges', async(req, res) => {
   try {
     const allChallenges = await Challenge.find({});
-    const challenges = allChallenges(challenge => challenge.serialize());
-
+    const challenges = allChallenges.map(challenge => challenge.serialize());
     return res.json({ challenges })
   } catch (error) {
     return res.status(500).json(error);

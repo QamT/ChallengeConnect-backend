@@ -1,6 +1,7 @@
 const cloudinary = require('cloudinary');
 
 const { storage } = require('../fileMiddleware');
+const { Challenge } = require('../models/challenge');
 const { Team, Proof } = require('../models/team');
 const { Admin } = require('../models/admin');
 
@@ -28,7 +29,7 @@ module.exports = {
       await teams.save();
 
       if (teams[team].score === 5) {
-        const challenge = challenge.findOne({ _id: challengeId });
+        const challenge = Challenge.findOne({ _id: challengeId });
         challenge.completed = true;
         await challenge.save();
         return res.json(`${team} has won`);
@@ -81,6 +82,7 @@ module.exports = {
       await admin.save();
       await proof.save();
 
+      return res.status(200).json('proof challenged');
     } catch (error) {
       res.status(500).json(error);
     }

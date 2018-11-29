@@ -13,8 +13,16 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  firstName: { type: String, required: true},
-  lastName: { type: String, required: true},
+  firstName: { 
+    type: String, 
+    required: true,
+    set: v => (v.charAt(0).toUpperCase() + v.slice(1))
+  },
+  lastName: { 
+    type: String, 
+    required: true,
+    set: v => (v.charAt(0).toUpperCase() + v.slice(1))
+  },
   profilePic: { 
     url: { type: String, default: ''},
     id: { type: String, default: '' }
@@ -26,14 +34,14 @@ const userSchema = new Schema({
     id: { type: mongoose.Schema.ObjectId || Boolean, ref: 'Challenge', default: null }, // game complete
     challengeRequested: { 
       id: { type: mongoose.Schema.ObjectId || Boolean, ref: 'Challenge', default: null }, 
-      team: { type: String || Boolean, enum: ['a', 'b', null], default: null } 
+      team: { type: String || Boolean, enum: ['a', 'b', null], default: null} 
     } 
    },
   score: { type: Number, default: 0 },
   friends: {
-    list: [{ id: { type: mongoose.Schema.ObjectId, ref: 'User' } }],
-    friendRequests: [{ id: { type: mongoose.Schema.ObjectId, ref: 'User' } }],
-    friendRequested: [{ id: { type: mongoose.Schema.ObjectId, ref: 'User' } }]
+    list: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    friendRequests: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    friendRequested: [{ type: mongoose.Schema.ObjectId, ref: 'User' }]
   } 
 });
 
@@ -92,6 +100,7 @@ userSchema.methods = {
 
   serializeUserDetails() {
     return {
+      id: this._id,
       firstName: this.firstName,
       lastName: this.lastName,
       profilePic: this.profilePic,
@@ -102,6 +111,7 @@ userSchema.methods = {
 
   serializeLeaderInfo() {
     return {
+      id: this._id,
       firstName: this.firstName,
       lastName: this.lastName,
       profilePic: this.profilePic,

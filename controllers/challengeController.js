@@ -24,32 +24,35 @@ module.exports = {
       const user = await User.findOne({ _id: req.user.id });
 
       const admin = await Admin.create({ user: req.user.id });
-      let proofA = [1,2,3,4,5].reduce(async(acc, val) => {
-        acc.push(await Proof.create({}));
-        return acc;
-      }, []);
-      let proofB = [1,2,3,4,5].reduce(async(acc, val) => {
-        acc.push(await Proof.create({}));
-        return acc;
-      }, [])
-      
-      const teams = await teams.create({
+      let proofA = await Promise.all([
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({})
+      ]);
+      let proofB = await Promise.all([
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({}),
+        Proof.create({})
+      ]);
+      console.log(proofA);
+      const teams = await Team.create({
         a: {
-          team: [],
-          proof: proofA,
-          score: 0
+          team: [req.user.id],
+          proofs: proofA
         },
         b: {
-          team: [],
-          proof: proofB,
-          score: 0
+          proofs: proofB
         }
       });
-      const challenge = await challenge.create({
+      const challenge = await Challenge.create({
         admin: admin._id,
         title,
         challenges,
-        teams: teams._id,
+        teams: teams._id
       });
 
       user.currentChallenge.id = challenge._id;
@@ -61,19 +64,18 @@ module.exports = {
   },
 
   requestChallenge: async(req, res) => {
-    const { challengeId, adminId } = req.body;
+    const { challengeId, adminId, team } = req.body;
 
     try {
       const user = await User.findOne({ _id: req.user.id });
       const admin = await Admin.findOne({ _id: adminId });
-
       user.currentChallenge.challengeRequested.id = challengeId;
       user.currentChallenge.challengeRequested.team = team;
-      admin.usersRequests.push({ id: req.user.id })
+      admin.usersRequest.push(req.user.id)
       await user.save();
       await admin.save();
 
-      return res.status(200).json(user.serialize());
+      return res.status(200).json('challenge requested');
     } catch (error) {
       return res.status(500).json(error);
     }

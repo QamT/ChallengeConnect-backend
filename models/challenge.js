@@ -5,7 +5,8 @@ const challengeSchema = new Schema ({
   admin: { type: mongoose.Schema.ObjectId, ref: 'Admin', required: true },
   title: { type: String, required: true },
   challenges: {
-    type: [{ type: String, required: true }],
+    type: [String],
+    required: true,
     validate: {
       validator: v => (v.length === 5),
       message: () => ('must have 5 challenges')

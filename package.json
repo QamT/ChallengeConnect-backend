@@ -2,7 +2,8 @@
   "name": "challenge-app-server",
   "version": "",
   "scripts": {
-    "start": "nodemon ./app.js"
+    "dev": "nodemon ./app.js",
+    "start": "node ./app.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",

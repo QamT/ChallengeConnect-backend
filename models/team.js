@@ -14,7 +14,7 @@ const teamSchema = new Schema ({
       type: [proofSchema],
       validate: {
         validator: v => (v.length === 5),
-        message: () => ('must have 5 challenges')
+        message: () => ('must have 5 proofs')
       }
     },
     score: { type: Number, default: 0}
@@ -25,7 +25,7 @@ const teamSchema = new Schema ({
       type: [proofSchema],
       validate: {
         validator: v => (v.length === 5),
-        message: () => ('must have 5 challenges')
+        message: () => ('must have 5 proofs')
       }
     },
     score: { type: Number, default: 0}

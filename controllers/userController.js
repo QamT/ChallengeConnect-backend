@@ -87,16 +87,16 @@ module.exports = {
   },
 
   acceptFriendRequest: async(req, res) => {
-    const{ userId } = req.body;
+    const { userId } = req.body;
 
     try {
       const user = await User.findOne({ _id: req.user.id });
       const otherUser = await User.findOne({ _id: userId });
 
       user.friends.list.push(userId);
-      user.friends.friendRequests = user.friends.friendRequests.filter(val => val._id !== userId); //FIX NEED TO USE ACTUAL MONGOOSE FUNCTIONS
+      user.friends.friendRequests = user.friends.friendRequests.filter(val => JSON.stringify(val._id) !== JSON.stringify(userId)); 
       otherUser.friends.list.push(req.user.id);
-      otherUser.friends.friendRequested = user.friends.friendRequested.filter(val => val._id !== req.user.id); //FIX NEED TO USE ACTUAL MONGOOSE FUNCTIONS
+      otherUser.friends.friendRequested = user.friends.friendRequested.filter(val => JSON.stringify(val._id) !== JSON.stringify(req.user.id)); 
       await user.save();
       await otherUser.save();
 
@@ -107,14 +107,14 @@ module.exports = {
   },
 
   rejectFriendRequest: async(req, res) => {
-    const{ userId } = req.body;
+    const { userId } = req.body;
 
     try {
       const user = await User.findOne({ _id: req.user.id });
       const otherUser = await User.findOne({ _id: userId });
 
-      user.friends.friendRequests = user.friends.friendRequests.filter(val => val._id !== userId);
-      otherUser.friends.friendRequested = user.friends.friendRequested.filter(val => val._id !== req.user.id); 
+      user.friends.friendRequests = user.friends.friendRequests.filter(val => JSON.stringify(val._id) !== JSON.stringify(userId));
+      otherUser.friends.friendRequested = user.friends.friendRequested.filter(val => JSON.stringify(val._id) !== JSON.stringify(req.user.id)); 
 
       await user.save();
       await otherUser.save();
@@ -132,8 +132,8 @@ module.exports = {
       const user = await User.findOne({ _id: req.user.id });
       const otherUser = await User.findOne({ _id: userId });
 
-      user.friends.list = user.friends.list.filter(val => val._id !== userId);
-      otherUser.friends.list = otherUser.friends.list.filter(val => val._id !== userId);
+      user.friends.list = user.friends.list.filter(val => JSON.stringify(val._id) !== JSON.stringify(userId));
+      otherUser.friends.list = otherUser.friends.list.filter(val => JSON.stringify(val._id) !== JSON.stringify(req.user.id));
       
       await user.save();
       await otherUser.save();

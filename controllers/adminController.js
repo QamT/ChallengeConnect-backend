@@ -21,34 +21,40 @@ module.exports = {
   },
 
   requestChallengeAccepted: async(req, res) => {
-    const { adminId, challengeId, group, teamId } = req.body;
+    const { adminId, userId, challengeId, group, teamId } = req.body;
 
-    try {
-      const user = await User.findOne({ _id: adminId });
-      const teams = await team.findOne({ _id: teamId });
+    try { 
+      const admin = await Admin.findOne({ _id: adminId });
+      const user = await User.findOne({ _id: userId });
+      const teams = await Team.findOne({ _id: teamId });
 
+      admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
       user.currentChallenge.id = challengeId;
-      teams[group].team.push(adminId)
+      teams[group].team.push(userId)
       user.currentChallenge.challengeRequested.id = null;
       user.currentChallenge.challengeRequested.team = null;
       await user.save();
-      await team.save();
+      await teams.save();
+      await admin.save();
 
-      return res.status(200).json(user.serialize());
+      return res.status(200).json('user was accepted for challenge');
     } catch (error) {
       return res.status(500).json(error);
     }
   },
 
   requestChallengeRejected: async(req, res) => {
-    const { userId } = req.body;
+    const { userId, adminId } = req.body;
 
     try {
+      const adminId = await User.findOne({ _id: adminId });
       const user = await User.findOne({ _id: userId });
       
+      admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
       user.currentChallenge.challengeRequested.id = null;
       user.currentChallenge.challengeRequested.team = null;
       await user.save();
+      await admin.save();
 
       return res.status(200).json(user.serialize());
     } catch (error) {
@@ -65,7 +71,7 @@ module.exports = {
       const fileId = `reactapp/${proof.id}`;
 
       await storage.cloudinary.uploader.destroy(fileId);
-      admin.proofChallenged = admin.proofChallenged.filter(proof => proof.id !== proofId);
+      admin.proofChallenged = admin.proofChallenged.filter(proof => JSON.stringify(proof.id) !== JSON.stringify(proofId));
       proof.url = '';
       proof.id = '';
       proof.challenged = false;
@@ -86,7 +92,7 @@ module.exports = {
       const admin = await Admin.findOne({ _id: adminId });
       const proof = await Proof.findOne({ _id: proofId });
 
-      admin.proofChallenged = admin.proofChallenged.filter(proof => proof.id !== proofId);
+      admin.proofChallenged = admin.proofChallenged.filter(proof => JSON.stringify(proof.id) !== JSON.stringify(proofId));
       proof.challenged = false;
 
       await admin.save();
