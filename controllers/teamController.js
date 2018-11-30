@@ -8,7 +8,7 @@ const { Admin } = require('../models/admin');
 module.exports = {
 
   getTeams: async(req, res) => {
-    const { teamId } = req.params.id;
+    const { id: teamId } = req.params;
 
     try {
       const teams = await Team.findOne({ _id: teamId });
