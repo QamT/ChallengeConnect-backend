@@ -6,7 +6,8 @@ const { Admin } = require('../models/admin');
 module.exports = {
 
   getChallenge: async(req, res) => {
-    const { challengeId } = req.params.id;
+    const { id: challengeId } = req.params;
+    console.log(challengeId);
 
     try {
       const challenge = await Challenge.findOne({ _id: challengeId });
