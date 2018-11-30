@@ -7,7 +7,6 @@ module.exports = {
 
   getChallenge: async(req, res) => {
     const { id: challengeId } = req.params;
-    console.log(challengeId);
 
     try {
       const challenge = await Challenge.findOne({ _id: challengeId });

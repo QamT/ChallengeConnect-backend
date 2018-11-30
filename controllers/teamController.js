@@ -12,8 +12,7 @@ module.exports = {
 
     try {
       const teams = await Team.findOne({ _id: teamId });
-
-      return res.status(200).json(team.serialize());
+      return res.status(200).json(teams.serialize());
     } catch (error) {
       res.status(500).json(error);
     }
