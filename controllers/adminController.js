@@ -29,13 +29,14 @@ module.exports = {
       const teams = await Team.findOne({ _id: teamId });
 
       admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
+      await admin.save();
+      if (user.currentChallenge.id) return res.json('user is already in a challenge');
       user.currentChallenge.id = challengeId;
-      teams[group].team.push(userId)
+      teams[group].team.push(user.serializeUserDetails());
       user.currentChallenge.challengeRequested.id = null;
       user.currentChallenge.challengeRequested.team = null;
       await user.save();
       await teams.save();
-      await admin.save();
 
       return res.status(200).json('user was accepted for challenge');
     } catch (error) {

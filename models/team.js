@@ -9,7 +9,16 @@ const proofSchema = new Schema ({
 
 const teamSchema = new Schema ({
   a: {
-    team: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    team: [{ 
+      id: { type: mongoose.Schema.ObjectId, ref: 'User'},
+      firstName: String,
+      lastName: String,
+      profilePic: {
+        url: String,
+        id: String
+      },
+      about: String
+     }],
     proofs: {
       type: [proofSchema],
       validate: {
@@ -20,7 +29,16 @@ const teamSchema = new Schema ({
     score: { type: Number, default: 0}
   },
   b: {
-    team: [{ type: mongoose.Schema.ObjectId, ref: 'User'}],
+    team: [{ 
+      id: { type: mongoose.Schema.ObjectId, ref: 'user'},
+      firstName: String,
+      lastName: String,
+      profilePic: {
+        url: String,
+        id: String
+      },
+      about: String
+     }],
     proofs: {
       type: [proofSchema],
       validate: {
@@ -35,7 +53,7 @@ const teamSchema = new Schema ({
 teamSchema.methods = {
   serialize() {
     return {
-      _id: this._id,
+      id: this._id,
       teamA: this.a,
       teamB: this.b
     }
@@ -45,7 +63,7 @@ teamSchema.methods = {
 proofSchema.methods = {
   serialize() {
     return {
-      _id: this._id,
+      id: this._id,
       url: this.url,
       challenged: this.challenged
     }

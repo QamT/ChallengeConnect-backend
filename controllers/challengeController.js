@@ -25,18 +25,18 @@ module.exports = {
 
       const admin = await Admin.create({ user: req.user.id });
       let proofA = await Promise.all([
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({})
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize())
       ]);
       let proofB = await Promise.all([
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({}),
-        Proof.create({})
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize()),
+        Proof.create({}).then(proof => proof.serialize())
       ]);
       console.log(proofA);
       const teams = await Team.create({
@@ -71,7 +71,7 @@ module.exports = {
       const admin = await Admin.findOne({ _id: adminId });
       user.currentChallenge.challengeRequested.id = challengeId;
       user.currentChallenge.challengeRequested.team = team;
-      admin.usersRequest.push(req.user.id)
+      admin.usersRequest.push(user.serializeUserDetails());
       await user.save();
       await admin.save();
 

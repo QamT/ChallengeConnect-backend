@@ -76,10 +76,11 @@ module.exports = {
       const admin = await Admin.findOne({ _id: adminId });
       const proof = await Proof.findOne({ _id: proofId });
 
-      admin.proofChallenged.push(proofId);
       proof.challenged = true;
-      await admin.save();
       await proof.save();
+      admin.proofChallenged.push(proof.serialize());
+      await admin.save();
+
 
       return res.status(200).json('proof challenged');
     } catch (error) {

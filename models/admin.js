@@ -3,8 +3,21 @@ const Schema = mongoose.Schema;
 
 const adminSchema= new Schema({
   user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
-  usersRequest: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-  proofChallenged: [{ type: mongoose.Schema.ObjectId, ref: 'Proof' }],
+  usersRequest: [{ 
+    id: { type: mongoose.Schema.ObjectId, ref: 'User'},
+    firstName: String,
+    lastName: String,
+    profilePic: {
+      url: String,
+      id: String
+    },
+    about: String
+   }],
+  proofChallenged: [{
+    id: { type: mongoose.Schema.ObjectId, ref: 'Proof'},
+    url: String,
+    challenged: Boolean
+   }],
 });
 
 adminSchema.methods = {

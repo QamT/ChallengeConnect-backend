@@ -104,7 +104,6 @@ userSchema.methods = {
       firstName: this.firstName,
       lastName: this.lastName,
       profilePic: this.profilePic,
-      age: this.age,
       about: this.about,
     }
   },
