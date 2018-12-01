@@ -20,7 +20,7 @@ const teamSchema = new Schema ({
       about: String
      }],
     proofs: {
-      type: [proofSchema],
+      type: [{ type: mongoose.Schema.ObjectId }],
       validate: {
         validator: v => (v.length === 5),
         message: () => ('must have 5 proofs')
@@ -40,7 +40,7 @@ const teamSchema = new Schema ({
       about: String
      }],
     proofs: {
-      type: [proofSchema],
+      type: [{ type: mongoose.Schema.ObjectId }],
       validate: {
         validator: v => (v.length === 5),
         message: () => ('must have 5 proofs')

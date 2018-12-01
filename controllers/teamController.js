@@ -41,7 +41,7 @@ module.exports = {
   },
 
   getProof: async(req, res) => {
-    const { proofId } = req.body;
+    const { proofId } = req.params;
 
     try {
       const proof = await Proof.findOne({ _id: proofId });
