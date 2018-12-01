@@ -25,23 +25,23 @@ module.exports = {
 
       const admin = await Admin.create({ user: req.user.id });
       let proofA = await Promise.all([
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize())
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id)
       ]);
       let proofB = await Promise.all([
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize()),
-        Proof.create({}).then(proof => proof.serialize())
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id),
+        Proof.create({}).then(proof => proof._id)
       ]);
-      console.log(proofA);
+      console.log([user.serializeUserDetails()])
       const teams = await Team.create({
         a: {
-          team: [req.user.id],
+          team: [user.serializeUserDetails()],
           proofs: proofA
         },
         b: {
