@@ -3,6 +3,7 @@ const router = express.Router();
 
 const { User } = require( '../models/user');
 const { Challenge } = require('../models/challenge');
+const { Team } = require('../models/team');
 
 router.get('/findUser/:name', async(req, res) => {
   let { name } = req.params;
@@ -16,7 +17,6 @@ router.get('/findUser/:name', async(req, res) => {
     const filterByLastName = users.filter(user => user.lastName.toLowerCase().includes(lastName.toLowerCase()));
     if (!filterByLastName) return res.json(null);
     const userInfo = filterByLastName.map(user => user.serializeUserDetails());
-    console.log(userInfo);
 
     return res.json(userInfo);
   } catch (error) {
@@ -38,9 +38,11 @@ router.get('/leaderboard', async(req, res) => {
 
 router.get('/getChallenges', async(req, res) => {
   try {
-    const allChallenges = await Challenge.find({});
+    const allChallenges = await Challenge.find({'active': false});
+    const teams = await Promise.all(allChallenges.map(async(challenge) => await Team.findOne({ _id: challenge.teams })))
     const challenges = allChallenges.map(challenge => challenge.serialize());
-    return res.json({ challenges })
+    
+    return res.json({ challenges, teams: teams.map(team => team.serialize()) })
   } catch (error) {
     return res.status(500).json(error);
   }
