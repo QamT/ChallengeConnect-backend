@@ -56,12 +56,15 @@ module.exports = {
       });
 
       user.currentChallenge.id = challenge._id;
+      user.currentChallenge.challengeRequested.id = null;
       await user.save();
       return res.status(201).json(challenge.serialize());
     } catch (error) {
       return res.status(500).json(error)
     }
   },
+
+  //delete challenge route
 
   requestChallenge: async(req, res) => {
     const { challengeId, adminId } = req.body;
