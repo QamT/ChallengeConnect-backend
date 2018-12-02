@@ -33,8 +33,7 @@ const userSchema = new Schema({
   currentChallenge: { 
     id: { type: mongoose.Schema.ObjectId || Boolean, ref: 'Challenge', default: null }, // game complete
     challengeRequested: { 
-      id: { type: mongoose.Schema.ObjectId || Boolean, ref: 'Challenge', default: null }, 
-      team: { type: String || Boolean, enum: ['a', 'b', null], default: null} 
+      id: { type: mongoose.Schema.ObjectId || Boolean, ref: 'Challenge', default: null }
     } 
    },
   score: { type: Number, default: 0 },

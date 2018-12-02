@@ -34,7 +34,6 @@ module.exports = {
       user.currentChallenge.id = challengeId;
       teams[group].team.push(user.serializeUserDetails());
       user.currentChallenge.challengeRequested.id = null;
-      user.currentChallenge.challengeRequested.team = null;
       await user.save();
       await teams.save();
 
@@ -53,7 +52,6 @@ module.exports = {
       
       admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
       user.currentChallenge.challengeRequested.id = null;
-      user.currentChallenge.challengeRequested.team = null;
       await user.save();
       await admin.save();
 

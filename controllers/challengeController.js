@@ -64,13 +64,12 @@ module.exports = {
   },
 
   requestChallenge: async(req, res) => {
-    const { challengeId, adminId, team } = req.body;
+    const { challengeId, adminId } = req.body;
 
     try {
       const user = await User.findOne({ _id: req.user.id });
       const admin = await Admin.findOne({ _id: adminId });
       user.currentChallenge.challengeRequested.id = challengeId;
-      user.currentChallenge.challengeRequested.team = team;
       admin.usersRequest.push(user.serializeUserDetails());
       await user.save();
       await admin.save();
