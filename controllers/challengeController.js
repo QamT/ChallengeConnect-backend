@@ -56,7 +56,7 @@ module.exports = {
       });
 
       user.currentChallenge.id = challenge._id;
-      user.currentChallenge.challengeRequested.id = null;
+      user.currentChallenge.challengeRequested.id = null; 
       await user.save();
       return res.status(201).json(challenge.serialize());
     } catch (error) {
