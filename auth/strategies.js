@@ -1,18 +1,16 @@
-require('dotenv').config();
 const passport = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local');
 const { Strategy: JWTStrategy, ExtractJwt } = require('passport-jwt');
 
-const { User } = require('../models/user');
+const { JWT_SECRET } = require('../config');
+const User = require('../models/user');
 
 const localStrategy = new LocalStrategy(async(username, password, done) => {
   try {
     const user = await User.findOne({ username });
-    if (!user) {
+    if (!user || !user.authenticateUser(password)) {
       return done(null, false);
-    } else if (!user.authenticateUser(password)) {
-      return done(null, false);
-    }
+    } 
     return done(null, user);
     } catch(e) {
       return done(e, false);
@@ -22,7 +20,7 @@ const localStrategy = new LocalStrategy(async(username, password, done) => {
 const JwtStrategy = new JWTStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: JWT_SECRET
   },
   async(payload, done) => {
     try {

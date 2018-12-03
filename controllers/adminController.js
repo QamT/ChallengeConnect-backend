@@ -1,105 +1,79 @@
-const cloudinary = require('cloudinary');
+const { ObjectID } = require('mongodb');
 
-const { storage } = require('../fileMiddleware');
-const { User } = require( '../models/user');
+const { AppError, wrapAsync } = require('../utils');
+const User = require( '../models/user');
 const { Team, Proof } = require('../models/team');
-const { Admin } = require('../models/admin');
-
+const Admin = require('../models/admin');
 
 module.exports = {
 
-  getAdmin: async(req, res) => {
-    const { adminId } = req.params.id;
+  getAdmin: wrapAsync(async(req, res, next) => {
+    const { adminId } = req.params;
 
-    try {
-      const admin = Admin.findOne({ _id: adminId });
+    if (!ObjectID.isValid(adminId)) throw new AppError(`Invalid Admin Id`);
 
-      return res.status(200).json(admin.serialize());
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  },
+    const admin = await Admin.findById(adminId);
+    res.status(200).json(admin.serialize());
+  }),
 
-  requestChallengeAccepted: async(req, res) => {
+  requestChallengeAccepted: wrapAsync(async(req, res, next) => {
     const { adminId, userId, challengeId, group, teamId } = req.body;
 
-    try { 
-      const admin = await Admin.findOne({ _id: adminId });
-      const user = await User.findOne({ _id: userId });
-      const teams = await Team.findOne({ _id: teamId });
+    const admin = await Admin.findById(adminId);
+    const user = await User.findById(userId);
+    const teams = await Team.findById(teamId);
 
-      admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
-      await admin.save();
-      if (user.currentChallenge.id) return res.json('user is already in a challenge');
-      user.currentChallenge.id = challengeId;
-      teams[group].team.push(user.serializeUserDetails());
-      user.currentChallenge.challengeRequested.id = null;
-      await user.save();
-      await teams.save();
+    await admin.removeRequest(userId);
 
-      return res.status(200).json('user was accepted for challenge');
-    } catch (error) {
-      return res.status(500).json(error);
+    if (user.currentChallenge.id) {
+      return res.json({ message: `${user.firstName} is already in another challenge.`, admin: admin.serialize() });
     }
-  },
+    if (teams[group].team.length === 5) throw new AppError(`Team ${group} is full`);
 
-  requestChallengeRejected: async(req, res) => {
-    const { userId, adminId } = req.body;
+    await user.addChallenge(challengeId);
+    await teams.addMember(group, user.serializeUserDetails());
+    
+    res.status(200).json({ admin: admin.serialize(), team: teams[group].team });
+  }),
 
-    try {
-      const adminId = await User.findOne({ _id: adminId });
-      const user = await User.findOne({ _id: userId });
+  requestChallengeRejected: wrapAsync(async(req, res, next) => {
+    const { userId, adminId, challengeId } = req.body;
+
+    const admin = await Admin.findById(adminId);
+    const user = await User.findById(userId);
       
-      admin.usersRequest = admin.usersRequest.filter(val => JSON.stringify(val) !== JSON.stringify(userId));
-      user.currentChallenge.challengeRequested.id = null;
-      await user.save();
-      await admin.save();
+    await admin.removeRequest(userId);
+    await user.removeChallengeRequested(challengeId);
 
-      return res.status(200).json(user.serialize());
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  },
+    res.status(200).json(admin.serialize());
+  }),
 
-  denyChallengedProof: async(req, res) => {
+  denyChallengedProof: wrapAsync(async(req, res, next) => {
+    const { proofId, adminId, userId, teamId, group } = req.body
+
+    const admin = await Admin.findById(adminId);
+    const proof = await Proof.findById(proofId);
+    const user = await User.findById(userId);
+    const team = await Team.findById(teamId);
+    const fileId = `reactapp/${proof.id}`;
+
+    await proof.clearProof(fileId);
+    await admin.removeChallenged(proofId);
+    await user.decreaseScore();
+    await team.decreaseTeamScore(group);
+
+    res.status(200).json(admin.serialize());
+  }),
+
+  acceptChallengedProof: wrapAsync(async(req, res, next) => {
     const { proofId, adminId } = req.body
 
-    try {
-      const admin = await Admin.findOne({ _id: adminId });
-      const proof = await Proof.findOne({ _id: proofId });
-      const fileId = `reactapp/${proof.id}`;
-
-      await storage.cloudinary.uploader.destroy(fileId);
-      admin.proofChallenged = admin.proofChallenged.filter(proof => JSON.stringify(proof.id) !== JSON.stringify(proofId));
-      proof.url = '';
-      proof.id = '';
-      proof.challenged = false;
-
-      await admin.save();
-      await proof.save();
-
-      return res.status(200).json('proof deleted after review');
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  },
-
-  acceptChallengedProof: async(req, res) => {
-    const { proofId, adminId } = req.body
-
-    try {
-      const admin = await Admin.findOne({ _id: adminId });
-      const proof = await Proof.findOne({ _id: proofId });
-
-      admin.proofChallenged = admin.proofChallenged.filter(proof => JSON.stringify(proof.id) !== JSON.stringify(proofId));
-      proof.challenged = false;
-
-      await admin.save();
-      await proof.save();
-
-      return res.status(200).json('proof accepted despite challenge');
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  }
+    const admin = await Admin.findById(adminId);
+    const proof = await Proof.findById(proofId);
+   
+    await admin.removeChallenged(proofId);
+    await proof.acceptProof();
+   
+    res.status(200).json(admin.serialize());
+  })
 }

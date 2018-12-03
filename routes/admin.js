@@ -4,7 +4,7 @@ const router = express.Router();
 const ac = require('../controllers/adminController');
 const { authJwt } = require('../auth/strategies');
 
-router.get('/:id', authJwt, ac.getAdmin);
+router.get('/:adminId', authJwt, ac.getAdmin);
 router.post('/acceptUser', authJwt, ac.requestChallengeAccepted);
 router.delete('/rejectUser', authJwt, ac.requestChallengeRejected);
 router.put('/denyProof', authJwt, ac.denyChallengedProof);

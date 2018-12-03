@@ -8,12 +8,25 @@ cloudinary.config({
   api_secret: process.env.API_SECRET
 });
 
-const storage = cloudinaryStorage({
+const proofStorage = cloudinaryStorage({
   cloudinary,
   folder: 'reactapp',
   allowedFormats: ['jpg', 'png', 'mp4'],
-  transformation: [{ width: 250, height: 250, crop: 'limit' }]
+  transformation: [{ width: 280, height: 175, crop: 'limit' }],
+  resource_type: 'auto',
+  params: {
+    resource_type: 'auto'
+  }
 });
 
-const parser = multer({ storage });
-module.exports = { parser, storage };
+const profileStorage = cloudinaryStorage({
+  cloudinary,
+  folder: 'reactapp',
+  allowedFormats: ['jpg', 'png'],
+  transformation: [{ width: 75, height: 75, crop: 'limit' }]
+});
+
+const proofParser = multer({ storage: proofStorage });
+const profileParser = multer({ storage: profileStorage });
+
+module.exports = { proofParser, profileParser, proofStorage };
